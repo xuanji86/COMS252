@@ -9,29 +9,17 @@ if [ $# '==' 1 ]; then
     echo "$1 bytes"
     echo "$1 bytes"
     elif [ $1 '-lt' 1000000 ] ; then
-        let "a = $1 * 0.001"
-        let "g = $1 * 0.976562"
-        let "h = $g / 1000"
-        printf "%.3f %s\n" "$a" "kbytes"
-        printf "%.3f %s\n" "$h" "Kibytes"
+        echo $(awk -v a=$1 'BEGIN {print a * 0.001}') "kbytes"
+        echo $(awk -v a=$1 'BEGIN {printf "%0.3f", a * 0.976562 / 1000}') "Kibytes"
     elif [ $1 '-ge' 1000000 ] && [ $1 '-lt' 1000000000 ]; then
-        let "a = ($1 - $1 % 1000) * 0.000001"
-        let "g = $1 * 0.00095367431640625"
-        let "h = $g / 1000"
-        printf "%.3f %s\n" "$a" "Mbytes"
-        printf "%f %s\n" "$g" "Mibytes"
+        echo $(awk -v a=$1 'BEGIN {printf "%0.3f", (a - a % 1000) * 0.000001}') "Mbytes"
+        echo $(awk -v a=$1 'BEGIN {printf "%.3f", a * 0.00095367431640625 / 1000}') "Mibytes"
     elif [ $1 '-ge' 1000000000 ] && [ $1 '-lt' 1000000000000 ]; then
-        let "a = $1 * 0.000000001"
-        let "g = $1 * 0.000953674"
-        let "h = $g / 1000"
-        printf "%.3f %s\n" "$a" "Gbytes"
-        printf "%.3f %s\n" "$h" "Mibytes"
+        echo $(awk -v a=$1 'BEGIN {printf "%0.3f", a * 0.000000001}') "Gbytes"
+        echo $(awk -v a=$1 'BEGIN {printf "%0.3f", a * 0.000953674 / 1000}') "Gibytes"
     elif [ $1 '-ge' 1000000000000 ]; then
-        let "a = ($1 - $1 % 1000000000) * 0.000000000001"
-        let "g = $1 * 0.00000000090949470177293 - ($1 * 0.00000000090949470177293) % 1"
-        let "h = g / 1000"
-        printf "%.3f %s\n" "$a" "Tbytes"
-        printf "%.3f %s\n" "$h" "Tibytes"
+        echo $(awk -v a=$1 'BEGIN {printf "%0.3f", (a - a % 1000000000) * 0.000000000001}') "Tbytes"
+        echo $(awk -v a=$1 'BEGIN {printf "%0.3f", a * 0.00000000090949470177293 / 1000}') "Tibytes"
     else
         echo " Error"
         exit 1
